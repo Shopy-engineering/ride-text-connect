@@ -54,7 +54,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isCurrentUser
             : "bg-uber-light-gray text-black rounded-bl-none"
         )}
       >
-        <p className="text-sm">{message.text}</p>
+        <p className="text-sm break-words">{message.text}</p>
         <div className={cn(
           "flex text-xs mt-1",
           isCurrentUser ? "justify-end" : "justify-start"
