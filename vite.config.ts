@@ -16,6 +16,16 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     viteSingleFile(),
+    {
+      name: 'copy-404',
+      closeBundle() {
+        const fs = require('fs');
+        const path = require('path');
+        const indexPath = path.resolve(__dirname, 'dist/index.html');
+        const notFoundPath = path.resolve(__dirname, 'dist/404.html');
+        fs.copyFileSync(indexPath, notFoundPath);
+      },
+    },
   ],
   resolve: {
     alias: {
