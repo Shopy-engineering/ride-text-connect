@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 // Get the repository name from the environment variable or fallback
 const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'ride-text-connect';
@@ -14,6 +15,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
+    viteSingleFile(),
   ],
   resolve: {
     alias: {
