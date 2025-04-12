@@ -32,7 +32,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // This would be replaced with your actual socket logic
   useEffect(() => {
     if (!socket) return;
 

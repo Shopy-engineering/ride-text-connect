@@ -5,13 +5,13 @@ export const createMockUsers = (): Record<UserRole, User> => {
   return {
     driver: {
       id: 'driver-1',
-      name: 'John Driver',
+      name: 'Charz Driver',
       role: 'driver',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=driver'
     },
     rider: {
       id: 'rider-1',
-      name: 'Sarah Rider',
+      name: 'Lawrence Rider',
       role: 'rider',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rider'
     }
