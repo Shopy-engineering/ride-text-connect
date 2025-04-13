@@ -102,6 +102,75 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     });
   };
 
+  
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleNewMessage = (msg: Message) => {
+      console.log('[ChatInterface] Received new_message:', msg); // Log received message
+      setConversation(prev => ({
+        ...prev,
+        messages: [...prev.messages, msg],
+        lastActivity: Date.now()
+      }));
+  
+      // Send read receipt if the message is from the other user
+      if (msg.senderId === otherUser.id) {
+        console.log(`[ChatInterface] Emitting message_read for messageId: ${msg.id}`); // Log emitting read
+        socket.emit('message_read', { messageId: msg.id, conversationId: conversation.id });
+      }
+    };
+  
+    const handleStatusUpdate = (update: { messageId: string; status: MessageStatus }) => {
+      // --- ADD THIS LOG ---
+      console.log('[ChatInterface] Received message_status update:', update);
+  
+      setConversation(prev => {
+        const updatedMessages = prev.messages.map(msg =>
+          msg.id === update.messageId
+            ? { ...msg, status: update.status }
+            : msg
+        );
+        // --- ADD THIS LOG ---
+        // Check if any message status actually changed
+        const statusChanged = prev.messages.some((msg, index) => msg.id === update.messageId && updatedMessages[index].status !== msg.status);
+        if (statusChanged) {
+          console.log(`[ChatInterface] State updated for messageId ${update.messageId} to status ${update.status}`);
+        } else {
+           console.log(`[ChatInterface] State update check for ${update.messageId}, but status was already ${update.status} or message not found.`);
+        }
+  
+        return {
+          ...prev,
+          messages: updatedMessages,
+          // Optionally update lastActivity here too if status changes count
+        };
+      });
+    };
+  
+    socket.on('new_message', handleNewMessage);
+    socket.on('message_status', handleStatusUpdate);
+  
+    // Join the conversation room
+    console.log(`[ChatInterface] Emitting join_conversation for convId: ${conversation.id}`); // Log joining
+    socket.emit('join_conversation', { conversationId: conversation.id });
+  
+    return () => {
+      console.log(`[ChatInterface] Cleanup: Removing listeners for convId: ${conversation.id}`); // Log cleanup
+      socket.off('new_message', handleNewMessage);
+      socket.off('message_status', handleStatusUpdate);
+      // Note: Leaving the conversation might happen automatically on disconnect,
+      // but explicit leave here is fine if component unmounts while connected.
+      // Consider if emitting leave is always desired on unmount.
+      // socket.emit('leave_conversation', { conversationId: conversation.id });
+    };
+  }, [socket, conversation.id, otherUser.id]); // Dependencies look correct
+  
+  // Optional: Add another useEffect to log the entire messages array when it changes
+  useEffect(() => {
+      console.log("[ChatInterface] Conversation messages updated:", conversation.messages);
+  }, [conversation.messages]);
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}

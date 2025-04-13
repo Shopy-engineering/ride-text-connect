@@ -9,7 +9,7 @@ const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1] || 'ride-text-conn
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? `/${repoName}/` : '/', // Use '/' for local preview
+  base: mode === 'production' ? `/ride-text-connect/` : '/', // Use '/' for local preview
   server: {
     host: "::",
     port: 8080,
